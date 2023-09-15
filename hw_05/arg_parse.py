@@ -17,17 +17,20 @@ def get_currency_list():
     return ",".join(currency_list)
 
 
-def check_days(value: str):
+def check_days(value: str) -> int:
     if 1<= int(value) <=10:
         return int(value)
     raise ArgumentError(message="Wrong value, must be 1..10", argument=None)
 
 
-def check_currency(value: str):
-    values = set(value.strip().split(","))
+def check_currency(value: str|list) -> list[str]:
+    if isinstance(value, str):
+        values = set(value.strip().split(","))
+    else:
+        values = value
     if all(item in currency_list for item in values):
         return list(values)
-    raise ArgumentError(message="Wrong list", argument=None)
+    raise ArgumentError(message="Wrong list of currency", argument=None)
 
 
 def arguments_parser():
