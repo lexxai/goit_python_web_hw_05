@@ -353,3 +353,75 @@ python main.py   --currencies PLN --days 10 --verbose
   }
 ]
 ```
+
+# SERVER/CLIENT
+
+## Client
+
+
+```
+exchange
+>>> exchange
+<<< Your command exchange accepetd. Result of command:
+[
+  {
+    "14.09.2023": {
+      "EUR": {
+        "sale": 41.1,
+        "purchase": 40.1
+      },
+      "USD": {
+        "sale": 38.0,
+        "purchase": 37.4
+      }
+    }
+  },
+  {
+    "13.09.2023": {
+      "EUR": {
+        "sale": 41.1,
+        "purchase": 40.1
+      },
+      "USD": {
+        "sale": 38.0,
+        "purchase": 37.4
+      }
+    }
+  },
+  {
+    "12.09.2023": {
+      "EUR": {
+        "sale": 41.0,
+        "purchase": 40.0
+      },
+      "USD": {
+        "sale": 37.9,
+        "purchase": 37.3
+      }
+    }
+  }
+]
+```
+
+
+```
+client.py
+What's your command (exchange)? 
+exchange 1 USD,PLN
+>>> exchange 1 USD,PLN
+<<< Your command exchange accepetd. Result of command:
+[
+  {
+    "14.09.2023": {
+      "PLN": {
+        "sale": 8.83,
+        "purchase": 8.44
+      },
+      "USD": {
+        "sale": 38.0,
+        "purchase": 37.4
+      }
+    }
+  }
+]
+```
