@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 aiohttp = "^3.8.5"
 tqdm = "^4.66.1"
+websockets = "^11.0.3"
 
 
 [build-system]
