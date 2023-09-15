@@ -19,20 +19,21 @@ async def exchange_service(websocket):
     command_arg = commands[1:]
     if command.strip().lower() == "exchange":
         args = {
-            "days": 3,
-            "currencies": "USD,EUR",
+            "days": 2,
+            "currencies": ["USD","EUR"],
             "verbose" : True
         }
         try:
             if len(command_arg) > 0:
                 args["days"] = int(command_arg[0])
             if len(command_arg) > 1:
-                args["currencies"] = command_arg[1]
+                args["currencies"] = command_arg[1].split(",")
         except ValueError:
             ...
-
+        response = f"Your command {command} accepetd. Waiting result..."
+        await websocket.send(response)
         excange_result = await exchange(args)
-        response = f"Your command {command} accepetd. Result of command:\n{excange_result}"
+        response = excange_result
     else:
         response = "Your command unknown!"
 
@@ -41,7 +42,7 @@ async def exchange_service(websocket):
 
 
 async def main():
-    async with websockets.serve(exchange_service, "localhost", 8765):
+    async with websockets.serve(exchange_service, "localhost", 8080):
         await asyncio.Future()  # run forever
 
 
