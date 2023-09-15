@@ -48,8 +48,8 @@ def filter_result(data_json: dict, allowed_list:list[str] = None) -> dict:
                 # logger.info(currency)
                 if currency in allowed_list:
                     filtered_rate[currency] = {
-                        "sale": er.get("saleRateNB"),
-                        "purchase": er.get("purchaseRateNB"),
+                        "sale": er.get("saleRate"),
+                        "purchase": er.get("purchaseRate"),
                     }
                 # optimieze filter all found, stop
                 if len(filtered_rate) >= len(allowed_list):

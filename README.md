@@ -17,6 +17,39 @@ options:
 ```
 
 
+## default run
+```
+python main.py                            
+[
+  {
+    "14.09.2023": {
+      "EUR": {
+        "sale": 41.1,
+        "purchase": 40.1
+      },
+      "USD": {
+        "sale": 38.0,
+        "purchase": 37.4
+      }
+    }
+  },
+  {
+    "13.09.2023": {
+      "EUR": {
+        "sale": 41.1,
+        "purchase": 40.1
+      },
+      "USD": {
+        "sale": 38.0,
+        "purchase": 37.4
+      }
+    }
+  }
+]
+
+```
+
+
 ## currencies
 ```
 python main.py   --currencies EUR,USD,GBP                 
@@ -24,32 +57,32 @@ python main.py   --currencies EUR,USD,GBP
   {
     "14.09.2023": {
       "EUR": {
-        "sale": 39.2674,
-        "purchase": 39.2674
+        "sale": 41.1,
+        "purchase": 40.1
       },
       "GBP": {
-        "sale": 45.6175,
-        "purchase": 45.6175
+        "sale": 47.46,
+        "purchase": 45.4
       },
       "USD": {
-        "sale": 36.5686,
-        "purchase": 36.5686
+        "sale": 38.0,
+        "purchase": 37.4
       }
     }
   },
   {
     "13.09.2023": {
       "EUR": {
-        "sale": 39.1906,
-        "purchase": 39.1906
+        "sale": 41.1,
+        "purchase": 40.1
       },
       "GBP": {
-        "sale": 45.5974,
-        "purchase": 45.5974
+        "sale": 47.46,
+        "purchase": 45.4
       },
       "USD": {
-        "sale": 36.5686,
-        "purchase": 36.5686
+        "sale": 38.0,
+        "purchase": 37.4
       }
     }
   }
@@ -62,64 +95,64 @@ python main.py   --currencies EUR,USD,GBP --days 4
   {
     "14.09.2023": {
       "EUR": {
-        "sale": 39.2674,
-        "purchase": 39.2674
+        "sale": 41.1,
+        "purchase": 40.1
       },
       "GBP": {
-        "sale": 45.6175,
-        "purchase": 45.6175
+        "sale": 47.46,
+        "purchase": 45.4
       },
       "USD": {
-        "sale": 36.5686,
-        "purchase": 36.5686
+        "sale": 38.0,
+        "purchase": 37.4
       }
     }
   },
   {
     "13.09.2023": {
       "EUR": {
-        "sale": 39.1906,
-        "purchase": 39.1906
+        "sale": 41.1,
+        "purchase": 40.1
       },
       "GBP": {
-        "sale": 45.5974,
-        "purchase": 45.5974
+        "sale": 47.46,
+        "purchase": 45.4
       },
       "USD": {
-        "sale": 36.5686,
-        "purchase": 36.5686
+        "sale": 38.0,
+        "purchase": 37.4
       }
     }
   },
   {
     "12.09.2023": {
       "EUR": {
-        "sale": 39.1979,
-        "purchase": 39.1979
+        "sale": 41.0,
+        "purchase": 40.0
       },
       "GBP": {
-        "sale": 45.7619,
-        "purchase": 45.7619
+        "sale": 47.39,
+        "purchase": 45.45
       },
       "USD": {
-        "sale": 36.5686,
-        "purchase": 36.5686
+        "sale": 37.9,
+        "purchase": 37.3
       }
     }
   },
   {
     "11.09.2023": {
       "EUR": {
-        "sale": 39.1247,
-        "purchase": 39.1247
+        "sale": 41.0,
+        "purchase": 40.0
       },
       "GBP": {
-        "sale": 45.6413,
-        "purchase": 45.6413
+        "sale": 47.45,
+        "purchase": 45.51
       },
       "USD": {
-        "sale": 36.5686,
-        "purchase": 36.5686
+        "sale": 37.9,
+        "purchase": 37.3
       }
     }
   }
@@ -136,16 +169,16 @@ python main.py   --currencies PLN --days 2 --verbose
   {
     "14.09.2023": {
       "PLN": {
-        "sale": 8.4988,
-        "purchase": 8.4988
+        "sale": 8.84,
+        "purchase": 8.46
       }
     }
   },
   {
     "13.09.2023": {
       "PLN": {
-        "sale": 8.405,
-        "purchase": 8.405
+        "sale": 8.84,
+        "purchase": 8.46
       }
     }
   }
