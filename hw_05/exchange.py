@@ -135,12 +135,13 @@ async def exchange(args: dict = None) -> str:
         logger.error(
             f"Some days was skipped, retuned only {len(results)} records from {days}"
         )
-    jonson_rich = json.dumps(results, indent=2)
-    return jonson_rich
+    jonson_data = json.dumps(results)
+    return jonson_data
 
 
 async def main_async(args: dict = None):
-    jonson_rich = await exchange(args)
+    jonson_data = await exchange(args)
+    jonson_rich = json.dumps(json.loads(jonson_data), indent=2)
     print(jonson_rich)
 
 
