@@ -34,6 +34,11 @@ def arguments_parser():
         default="EUR,USD",
         type=check_currency,
     )
+    ap.add_argument(
+        "--verbose",
+        help="print deailed log",
+        action="store_true"
+    )
 
     args = vars(ap.parse_args())
     return args
