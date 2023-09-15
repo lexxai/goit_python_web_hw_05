@@ -360,6 +360,8 @@ python main.py   --currencies PLN --days 10 --verbose
 
 
 ```
+client.py
+What's your command (exchange, exit)?
 exchange
 >>> exchange
 <<< Your command exchange accepetd. Result of command:
@@ -387,18 +389,6 @@ exchange
         "purchase": 37.4
       }
     }
-  },
-  {
-    "12.09.2023": {
-      "EUR": {
-        "sale": 41.0,
-        "purchase": 40.0
-      },
-      "USD": {
-        "sale": 37.9,
-        "purchase": 37.3
-      }
-    }
   }
 ]
 ```
@@ -406,7 +396,7 @@ exchange
 
 ```
 client.py
-What's your command (exchange)? 
+What's your command (exchange, exit)?
 exchange 1 USD,PLN
 >>> exchange 1 USD,PLN
 <<< Your command exchange accepetd. Result of command:
