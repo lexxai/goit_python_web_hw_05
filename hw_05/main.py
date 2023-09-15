@@ -3,6 +3,7 @@ from argparse import ArgumentParser, ArgumentError
 from datetime import date, timedelta
 import platform
 import logging
+import json
 
 import aiohttp
 
@@ -125,7 +126,8 @@ async def main(args):
 
     results = await asyncio.gather(*tasks, return_exceptions=True)
     logger.info(f"API result: {results}")
-    # results = filter_result(results)
+    print(json.dumps(results, indent=2))
+
 
 
 if __name__ == "__main__":
