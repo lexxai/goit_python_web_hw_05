@@ -71,6 +71,8 @@ async def get_request(url: str):
             async with session.get(url) as response:
                 if response.status < 400:
                     json = await response.json()
+                    if json:
+                        json = filter_result(json)
                 return json
         except (
             aiohttp.ClientConnectionError,
@@ -87,17 +89,43 @@ def date_calc(days: int) -> date:
     return date_c.strftime("%d.%m.%Y")
 
 
-def filter_result(data: dict):
-    allowed = c
+def filter_result(data_json: dict, allowed_list:list[str] = None) -> dict:
+    if allowed_list is None:
+        allowed_list = ["EUR","USD"]
+    result={}
+    if data_json:
+        date = data_json.get("date")
+        if date:
+            filtered_rate = {}   
+            exch_rate =  data_json.get("exchangeRate")
+            for er in exch_rate:
+                currency = er.get("currency")
+                if currency in allowed_list:
+                    filtered_rate[currency] = {
+                        "sale": er.get("saleRateNB"),
+                        "purchase": er.get("purchaseRateNB"),
+                    }
+        result[date]=filtered_rate
+        return result         
+
+
 
 
 async def main(args):
     days = args.get("days")
     logger.info(f"Get request for {days} days")
-    date_back = date_calc(days)
-    BANK_API = f"https://api.privatbank.ua/p24api/exchange_rates?json&date={date_back}"
-    result = await get_request(BANK_API)
-    logger.info(f"API result: {result}")
+    requests_list = []
+    tasks = []
+    for d in range(1,days+1):
+        date_back = date_calc(d)
+        logger.info(f"Get request for: {date_back}")
+        bank_api = f"https://api.privatbank.ua/p24api/exchange_rates?json&date={date_back}"
+        task = asyncio.create_task(get_request(bank_api))
+        tasks.append(task)
+
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    logger.info(f"API result: {results}")
+    # results = filter_result(results)
 
 
 if __name__ == "__main__":
