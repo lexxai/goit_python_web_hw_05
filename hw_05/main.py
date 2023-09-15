@@ -22,6 +22,8 @@ async def get_request(url: str, allowed_list: list[str] = None) -> dict | None:
                 json = None
                 if response.status < 400:
                     json = await response.json()
+                else:
+                    logger.error(f"{url}, response code:{response.status}")
                 return json
         except (
             aiohttp.ClientConnectionError,
@@ -85,8 +87,9 @@ async def get_currencies(days: int) -> str:
     # waiting all reults
     logger.info(f"Waing result for {len(tasks)} requests")
     if logger.getEffectiveLevel() == logging.INFO:
-        results = [await f
-                for f in tqdm(asyncio.as_completed(tasks), total=len(tasks))]
+        with logging_redirect_tqdm():
+            results = [await f
+                    for f in tqdm(asyncio.as_completed(tasks), total=len(tasks))]
     else:
         results = await asyncio.gather(*tasks, return_exceptions=True)
     # logger.info(f"API result: {results}")
@@ -99,6 +102,8 @@ async def main(args):
     logger.info(f"Get request for {days} days")
     results = await get_currencies(days)
     results = filter_results(results, currencies)
+    if len(results) != days:
+        logger.error(f"Some days was skipped, retuned only {len(results)} records from {days}")
     jonson_rich = json.dumps(results, indent=2)
     print(jonson_rich)
 
@@ -115,4 +120,7 @@ if __name__ == "__main__":
     verbose = args.get("verbose")
     if not verbose:
         logger.setLevel(logging.ERROR)
-    asyncio.run(main(args), debug=False)
+    try:
+        asyncio.run(main(args), debug=False)
+    except KeyboardInterrupt:
+        logger.info("Keyboard Interrupt")
