@@ -9,9 +9,9 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 try:
-    from arg_parse import arguments_parser
+    from arg_parse import arguments_parser, validate_args
 except ImportError:
-    from hw_05.arg_parse import arguments_parser
+    from hw_05.arg_parse import arguments_parser, validate_args
 
 
 
@@ -96,31 +96,51 @@ async def get_currencies(days: int) -> str:
     return(results)
 
 
-async def main(args):
-    days = args.get("days")
-    currencies = args.get("currencies")
+
+async def exchange(args: dict = None):
+    if args is None:
+        args = {
+            "days": 2,
+            "currencies": ["USD","EUR"],
+            "verbose" : False
+        }
+    if not validate_args(args):
+        logger.error("Bad arguments value")
+        return
+    days = args.get("days", 2)
+    currencies = args.get("currencies", ["USD","EUR"])
+    verbose = args.get("verbose", False)
+    if not verbose:
+        logger.setLevel(logging.ERROR)
     logger.info(f"Get request for {days} days")
     results = await get_currencies(days)
     results = filter_results(results, currencies)
     if len(results) != days:
         logger.error(f"Some days was skipped, retuned only {len(results)} records from {days}")
     jonson_rich = json.dumps(results, indent=2)
+    return jonson_rich
+
+
+async def main_async(args: dict = None):
+    jonson_rich = await exchange(args)
     print(jonson_rich)
 
 
-if __name__ == "__main__":
+
+logger = logging.getLogger(__name__)
+
+
+def main(init_arg: dict = None):
     if platform.system() == "Windows":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
     FORMAT = "%(asctime)s  %(message)s"
     logging.basicConfig(format=FORMAT, level=logging.INFO)
-    logger = logging.getLogger(__name__)
-
     args = arguments_parser()
-    verbose = args.get("verbose")
-    if not verbose:
-        logger.setLevel(logging.ERROR)
     try:
-        asyncio.run(main(args), debug=False)
+        asyncio.run(main_async(args), debug=False)
     except KeyboardInterrupt:
         logger.info("Keyboard Interrupt")
+
+
+if __name__ == "__main__":
+    main()

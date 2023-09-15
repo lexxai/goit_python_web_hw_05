@@ -4,6 +4,15 @@ currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 
                  'GEL', 'HUF', 'ILS', 'JPY', 'KZT', 'MDL', 'NOK', 'PLN', 'SEK', 'SGD', 
                  'TMT', 'TRY', 'USD', 'UZS', 'XAU']
 
+def validate_args(args):
+    try:
+       check_days(args.get("days"))
+       check_currency(args.get("currencies"))
+    except ArgumentError:
+       return False
+    finally:
+       return True 
+
 def get_currency_list():
     return ",".join(currency_list)
 
