@@ -6,26 +6,29 @@ currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 
 
 def validate_args(args):
     try:
-       check_days(args.get("days"))
-       check_currency(args.get("currencies"))
+        check_days(args.get("days"))
+        check_currency(args.get("currencies"))
+        return True 
     except ArgumentError:
        return False
-    finally:
-       return True 
+
 
 def get_currency_list():
     return ",".join(currency_list)
 
+
 def check_days(value: str):
     if 1<= int(value) <=10:
         return int(value)
-    raise ArgumentError
+    raise ArgumentError(message="Wrong value, must be 1..10", argument=None)
+
 
 def check_currency(value: str):
     values = set(value.strip().split(","))
     if all(item in currency_list for item in values):
         return list(values)
-    raise ArgumentError
+    raise ArgumentError(message="Wrong list", argument=None)
+
 
 def arguments_parser():
     ap = ArgumentParser(

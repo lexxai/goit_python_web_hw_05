@@ -106,7 +106,7 @@ async def exchange(args: dict = None):
         }
     if not validate_args(args):
         logger.error("Bad arguments value")
-        return
+        return "Bad arguments value"
     days = args.get("days", 2)
     currencies = args.get("currencies", ["USD","EUR"])
     verbose = args.get("verbose", False)

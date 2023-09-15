@@ -7,15 +7,32 @@ import logging
 try:
     from hw_05.exchange import exchange 
 except ImportError:
-    from main import exchange 
+    from exchange import exchange 
 
 
 async def exchange_service(websocket):
     command:str = await websocket.recv()
     print(f"<<< {command}")
+    command_line = command.strip()
+    commands=command_line.split()
+    command = commands[0]
+    command_arg = commands[1:]
     if command.strip().lower() == "exchange":
-        excange_result = await exchange()
-        response = f"Your command {command} accepetd. Result:\n {excange_result}"
+        args = {
+            "days": 3,
+            "currencies": "USD,EUR",
+            "verbose" : True
+        }
+        try:
+            if len(command_arg) > 0:
+                args["days"] = int(command_arg[0])
+            if len(command_arg) > 1:
+                args["currencies"] = command_arg[1]
+        except ValueError:
+            ...
+
+        excange_result = await exchange(args)
+        response = f"Your command {command} accepetd. Result of command:\n{excange_result}"
     else:
         response = "Your command unknown!"
 
