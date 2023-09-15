@@ -6,29 +6,10 @@ import json
 
 import aiohttp
 
-from arg_parse import arguments_parser
-
-
-currency_list = {
-    "USD": "долар США",
-    "EUR": "євро",
-    "CHF": "швейцарський франк",
-    "GBP": "британський фунт",
-    "PLZ": "польський злотий",
-    "SEK": "шведська крона",
-    "XAU": "золото",
-    "CAD": "канадський долар",
-}
-
-
-answer_code = {
-    "baseCurrency": "Базова валюта",
-    "currency": "Валюта угоди",
-    "saleRateNB": " Курс продажу НБУ",
-    "purchaseRateNB": "Курс купівлі НБУ",
-    "saleRate": "Курс продажу ПриватБанку",
-    "purchaseRate": "Курс купівлі ПриватБанку",
-}
+try:
+    from arg_parse import arguments_parser
+except ImportError:
+    from hw_05.arg_parse import arguments_parser
 
 
 
@@ -50,12 +31,6 @@ async def get_request(url: str, allowed_list: list[str] = None) -> dict | None:
             logger.error(e)
 
 
-def date_calc(days: int) -> date:
-    td = timedelta(days=days)
-    date_c = date.today() - td
-    return date_c.strftime("%d.%m.%Y")
-
-
 def filter_result(data_json: dict, allowed_list:list[str] = None) -> dict:
     if allowed_list is None:
         allowed_list = ["EUR","USD"]
@@ -64,10 +39,12 @@ def filter_result(data_json: dict, allowed_list:list[str] = None) -> dict:
         date = data_json.get("date")
         if date:
             filtered_rate = {}   
+            # cl = []
             exch_rate =  data_json.get("exchangeRate")
             for er in exch_rate:
                 currency = er.get("currency")
-                logger.info(currency)
+                # cl.append(currency)
+                # logger.info(currency)
                 if currency in allowed_list:
                     filtered_rate[currency] = {
                         "sale": er.get("saleRateNB"),
@@ -77,15 +54,17 @@ def filter_result(data_json: dict, allowed_list:list[str] = None) -> dict:
                 if len(filtered_rate) >= len(allowed_list):
                     break
         result[date]=filtered_rate
+        # print(cl)
         return result         
 
 
+def date_calc(days: int) -> date:
+    td = timedelta(days=days)
+    date_c = date.today() - td
+    return date_c.strftime("%d.%m.%Y")
 
 
-async def main(args):
-    days = args.get("days")
-    currencies = args.get("currencies")
-    logger.info(f"Get request for {days} days")
+async def get_currencies(days: int, currencies: list[str]) -> str:
     tasks = []
     for d in range(1,days+1):
         date_back = date_calc(d)
@@ -93,11 +72,19 @@ async def main(args):
         bank_api = f"https://api.privatbank.ua/p24api/exchange_rates?json&date={date_back}"
         task = asyncio.create_task(get_request(bank_api, currencies))
         tasks.append(task)
-
+    # waiting all reults
+    logger.info(f"Waing result for {len(tasks)} requests")
     results = await asyncio.gather(*tasks, return_exceptions=True)
-    logger.info(f"API result: {results}")
-    print(json.dumps(results, indent=2))
+    # logger.info(f"API result: {results}")
+    return(json.dumps(results, indent=2))
 
+
+async def main(args):
+    days = args.get("days")
+    currencies = args.get("currencies")
+    logger.info(f"Get request for {days} days")
+    result = await get_currencies(days, currencies)
+    print(result)
 
 
 if __name__ == "__main__":

@@ -1,18 +1,11 @@
 from argparse import ArgumentParser, ArgumentError
 
-currency_list = {
-    "USD": "долар США",
-    "EUR": "євро",
-    "CHF": "швейцарський франк",
-    "GBP": "британський фунт",
-    "PLN": "польський злотий",
-    "SEK": "шведська крона",
-    "XAU": "золото",
-    "CAD": "канадський долар",
-}
+currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 
+                 'GEL', 'HUF', 'ILS', 'JPY', 'KZT', 'MDL', 'NOK', 'PLN', 'SEK', 'SGD', 
+                 'TMT', 'TRY', 'UAH', 'USD', 'UZS', 'XAU']
 
 def get_currency_list():
-    return ",".join(currency_list.keys())
+    return ",".join(currency_list)
 
 def check_days(value: str):
     if 1<= int(value) <=10:
@@ -21,7 +14,7 @@ def check_days(value: str):
 
 def check_currency(value: str):
     values = set(value.strip().split(","))
-    if all(item in currency_list.keys() for item in values):
+    if all(item in currency_list for item in values):
         return list(values)
     raise ArgumentError
 
