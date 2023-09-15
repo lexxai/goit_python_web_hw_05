@@ -418,4 +418,4 @@ exchange 1 USD,PLN
 
 ## RESULT WEB CHAT
 
-![web char 01](hw_05\doc\result_web_01.png)
+![web char 01](hw_05/doc/result_web_01.png)
