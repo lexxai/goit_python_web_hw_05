@@ -1,11 +1,12 @@
 import asyncio
-from argparse import ArgumentParser, ArgumentError
 from datetime import date, timedelta
 import platform
 import logging
 import json
 
 import aiohttp
+
+from arg_parse import arguments_parser
 
 
 currency_list = {
@@ -30,50 +31,15 @@ answer_code = {
 }
 
 
-def get_currency_list():
-    return ",".join(currency_list.keys())
 
-
-def check_days(value: str):
-    if 1<= int(value) <=10:
-        return int(value)
-    raise ArgumentError
-
-def check_currency(value: str):
-    values = set(value.strip().split(","))
-    if all(item in currency_list.keys() for item in values):
-        return list(values)
-    raise ArgumentError
-
-def arguments_parser():
-    ap = ArgumentParser(
-        description=f"Get exchangeRate from Bank: {get_currency_list()}"
-    )
-    ap.add_argument(
-        "--days",
-        help="How many datys need to show reqults, max. 10 days, default: 2",
-        default=2,
-        type=check_days,
-    )
-    ap.add_argument(
-        "--currencies",
-        help=f'currencies for list. Allowed: items "{get_currency_list()}". Please use coma separeted list. default: EUR,USD ',
-        default="EUR,USD",
-        type=check_currency,
-    )
-
-    args = vars(ap.parse_args())
-    return args
-
-
-async def get_request(url: str):
+async def get_request(url: str, allowed_list: list[str] = None) -> dict | None:
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(url) as response:
                 if response.status < 400:
                     json = await response.json()
                     if json:
-                        json = filter_result(json)
+                        json = filter_result(json, allowed_list)
                 return json
         except (
             aiohttp.ClientConnectionError,
@@ -101,11 +67,15 @@ def filter_result(data_json: dict, allowed_list:list[str] = None) -> dict:
             exch_rate =  data_json.get("exchangeRate")
             for er in exch_rate:
                 currency = er.get("currency")
+                logger.info(currency)
                 if currency in allowed_list:
                     filtered_rate[currency] = {
                         "sale": er.get("saleRateNB"),
                         "purchase": er.get("purchaseRateNB"),
                     }
+                # optimieze filter all found, stop
+                if len(filtered_rate) >= len(allowed_list):
+                    break
         result[date]=filtered_rate
         return result         
 
@@ -114,14 +84,14 @@ def filter_result(data_json: dict, allowed_list:list[str] = None) -> dict:
 
 async def main(args):
     days = args.get("days")
+    currencies = args.get("currencies")
     logger.info(f"Get request for {days} days")
-    requests_list = []
     tasks = []
     for d in range(1,days+1):
         date_back = date_calc(d)
         logger.info(f"Get request for: {date_back}")
         bank_api = f"https://api.privatbank.ua/p24api/exchange_rates?json&date={date_back}"
-        task = asyncio.create_task(get_request(bank_api))
+        task = asyncio.create_task(get_request(bank_api, currencies))
         tasks.append(task)
 
     results = await asyncio.gather(*tasks, return_exceptions=True)
