@@ -2,7 +2,7 @@ from argparse import ArgumentParser, ArgumentError
 
 currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 
                  'GEL', 'HUF', 'ILS', 'JPY', 'KZT', 'MDL', 'NOK', 'PLN', 'SEK', 'SGD', 
-                 'TMT', 'TRY', 'UAH', 'USD', 'UZS', 'XAU']
+                 'TMT', 'TRY', 'USD', 'UZS', 'XAU']
 
 def get_currency_list():
     return ",".join(currency_list)
