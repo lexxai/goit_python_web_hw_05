@@ -4,13 +4,13 @@ currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 
                  'GEL', 'HUF', 'ILS', 'JPY', 'KZT', 'MDL', 'NOK', 'PLN', 'SEK', 'SGD', 
                  'TMT', 'TRY', 'USD', 'UZS', 'XAU']
 
-def validate_args(args):
+def validate_args(args: dict) -> tuple[bool, str]:
     try:
         check_days(args.get("days"))
         check_currency(args.get("currencies"))
-        return True 
-    except ArgumentError:
-       return False
+        return True, "" 
+    except ArgumentError as e:
+       return False, e.message
 
 
 def get_currency_list():
