@@ -5,6 +5,8 @@ import logging
 import json
 
 import aiohttp
+from tqdm import tqdm
+from tqdm.contrib.logging import logging_redirect_tqdm
 
 try:
     from arg_parse import arguments_parser
@@ -20,8 +22,6 @@ async def get_request(url: str, allowed_list: list[str] = None) -> dict | None:
                 json = None
                 if response.status < 400:
                     json = await response.json()
-                    # if json:
-                    #     json = filter_result(json, allowed_list)
                 return json
         except (
             aiohttp.ClientConnectionError,
@@ -84,7 +84,11 @@ async def get_currencies(days: int) -> str:
         tasks.append(task)
     # waiting all reults
     logger.info(f"Waing result for {len(tasks)} requests")
-    results = await asyncio.gather(*tasks, return_exceptions=True)
+    if logger.getEffectiveLevel() == logging.INFO:
+        results = [await f
+                for f in tqdm(asyncio.as_completed(tasks), total=len(tasks))]
+    else:
+        results = await asyncio.gather(*tasks, return_exceptions=True)
     # logger.info(f"API result: {results}")
     return(results)
 

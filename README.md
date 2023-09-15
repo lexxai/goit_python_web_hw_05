@@ -16,6 +16,8 @@ options:
   --verbose             print deailed log
 ```
 
+
+## currencies
 ```
 python main.py   --currencies EUR,USD,GBP                 
 [
@@ -53,7 +55,7 @@ python main.py   --currencies EUR,USD,GBP
   }
 ]
 ```
-
+## days 
 ```
 python main.py   --currencies EUR,USD,GBP --days 4 
 [
@@ -123,7 +125,7 @@ python main.py   --currencies EUR,USD,GBP --days 4
   }
 ]
 ```
-
+## verbose
 ```
 python main.py   --currencies PLN --days 2 --verbose         
 2023-09-15 04:04:26,151  Get request for 2 days
@@ -150,4 +152,22 @@ python main.py   --currencies PLN --days 2 --verbose
 ]
 
 
+```
+
+## Progress bas + verbose
+```
+python main.py   --currencies PLN --days 10 --verbose 
+2023-09-15 04:16:35,705  Get request for 10 days
+2023-09-15 04:16:35,705  Get request for: 14.09.2023
+2023-09-15 04:16:35,705  Get request for: 13.09.2023
+2023-09-15 04:16:35,705  Get request for: 12.09.2023
+2023-09-15 04:16:35,705  Get request for: 11.09.2023
+2023-09-15 04:16:35,705  Get request for: 10.09.2023
+2023-09-15 04:16:35,705  Get request for: 09.09.2023
+2023-09-15 04:16:35,705  Get request for: 08.09.2023
+2023-09-15 04:16:35,705  Get request for: 07.09.2023
+2023-09-15 04:16:35,705  Get request for: 06.09.2023
+2023-09-15 04:16:35,705  Get request for: 05.09.2023
+2023-09-15 04:16:35,705  Waing result for 10 requests
+ 30%|███████████████████████████▉                                                                 | 3/10 [00:10<00:26,  3.83s/it]
 ```
