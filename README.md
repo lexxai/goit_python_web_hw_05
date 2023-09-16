@@ -418,4 +418,13 @@ exchange 1 USD,PLN
 
 ## RESULT WEB CHAT
 
-![web char 01](hw_05/doc/result_web_01.png)
+![web char 01](doc/result_web_01.png)
+
+## RESULT WEBSOCKET SERVER LOG
+
+![websocket log 01](doc/result_log_01.png)
+
+## RESULT LOCAL WEB SERVER 
+
+![websocket log 01](doc/result_web_02.png)
+
