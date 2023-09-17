@@ -96,7 +96,9 @@ class CurrencyListCacheAsync:
 
     def log_configure(self, debug: bool = False):
         FORMAT = "%(asctime)s  %(message)s"
-        logging.basicConfig(format=FORMAT, level=logging.DEBUG if debug else logging.INFO)
+        # logging.basicConfig(format=FORMAT, level=logging.DEBUG if debug else logging.INFO)
+        self.logger.setLevel(level=logging.DEBUG if debug else logging.INFO)
+
 
 
 async def main_async(debug: bool = False):
@@ -109,13 +111,16 @@ async def main_async(debug: bool = False):
     cl.logger.info(await cl.get_list_async())
     await cl.update_cache(["EUR", "GBP"])
     cl.logger.info(await cl.get_list_async())
-    await cl.update_cache(["EUR", "AAA"])
+    await cl.update_cache(["USD","PLN","CAD", "EUR"])
     cl.logger.info(await cl.get_list_async())
     # await cl.update_cache(["EUR", "BBB"], forse=True)
     # self.logger.info(cl.currency_list)
 
 
 if __name__ == "__main__":
+    debug = False
+    FORMAT = "%(asctime)s  %(message)s"
+    logging.basicConfig(format=FORMAT, level=logging.DEBUG if debug else logging.INFO)
     if platform.system() == "Windows":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    asyncio.run(main_async(debug = True))
+    asyncio.run(main_async(debug = debug))

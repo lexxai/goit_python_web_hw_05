@@ -50,9 +50,9 @@ def check_currency(value: str|list) -> list[str]:
     raise ArgumentError(message="Wrong list of currency", argument=None)
 
 
-def arguments_parser():
+async def arguments_parser():
     ap = ArgumentParser(
-        description=f"Get exchangeRate from Bank: {get_currencies_str_cached()}"
+        description=f"Get exchangeRate from Bank: {await currency_list.get_str_async()}"
     )
     ap.add_argument(
         "--days",
@@ -62,7 +62,7 @@ def arguments_parser():
     )
     ap.add_argument(
         "--currencies",
-        help=f'currencies for list. Allowed: items "{get_currency_list_cached_async()}". Please use coma separeted list. default: EUR,USD ',
+        help=f'currencies for list. Allowed: items "{await currency_list.get_str_async()}". Please use coma separeted list. default: EUR,USD ',
         default="EUR,USD",
         type=check_currency,
     )

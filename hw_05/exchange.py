@@ -9,9 +9,9 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 try:
-    from arg_parse import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async
+    from arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async
 except ImportError:
-    from hw_05.arg_parse import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async
+    from hw_05.arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async
 
 
 async def get_request(
@@ -142,6 +142,7 @@ async def exchange(args: dict = None) -> str:
 
 
 async def main_async(args: dict = None):
+    args = await arguments_parser()
     jonson_data = await exchange(args)
     jonson_rich = json.dumps(json.loads(jonson_data), indent=2)
     print(jonson_rich)
@@ -159,9 +160,9 @@ def main(init_arg: dict = None):
     if platform.system() == "Windows":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     log_configure()
-    args = arguments_parser()
+
     try:
-        asyncio.run(main_async(args), debug=False)
+        asyncio.run(main_async(), debug=False)
     except KeyboardInterrupt:
         logger.info("Keyboard Interrupt")
 

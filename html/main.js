@@ -34,9 +34,7 @@ const connect = (message) => {
   socket.addEventListener('open', function (event) {
     if (message) {
       socket.send(session_id + " " + message)
-    } else {
-      socket.send('Connection Established');
-    }
+    } 
   });
 
   socket.addEventListener('message', function (event) {
@@ -47,7 +45,7 @@ const connect = (message) => {
 
   socket.addEventListener('close', (e) => {
     console.log('Socket is closed.', e.reason);
-    print_txt(' Socket is closed.')
+    // print_txt(' Socket is closed.')
   })
 }
 

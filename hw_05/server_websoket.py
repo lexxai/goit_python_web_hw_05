@@ -73,6 +73,7 @@ exchange_handler_busy = {}
 
 
 # lock = asyncio.Lock()
+sem = asyncio.Semaphore(2)
 
 sessions = {}
 
@@ -96,22 +97,28 @@ async def exchange_service(websocket: websockets):
         response = f"Sorry. The system is busy with your task."
         await websoket_send(response, websocket)
         return
-    async with lock:
-        print(f"<<< {command}")
-
-        if command_action in LIST_COMMANDS:
-            response = f"Your command '{command}' accepetd. Waiting result..."
-        else:
-            response = f"Your command '{command}' not accepetd."
+    
+    if sem.locked():
+        response = f"We're sorry. The system is busy, the response will be delayed, please be patient."
         await websoket_send(response, websocket)
-        if command_action == "exchange":
-            response = await exchange_handler(command_arg)
-        elif command_action == "list":
-            response = await exchange_cur_list_handler()
-        else:
-            response = "Your command unknown!"
 
-        await websoket_send(response, websocket)
+    async with sem:
+        async with lock:
+            print(f"<<< {command}")
+
+            if command_action in LIST_COMMANDS:
+                response = f"Your command '{command}' accepetd. Waiting result..."
+            else:
+                response = f"Your command '{command}' not accepetd."
+            await websoket_send(response, websocket)
+            if command_action == "exchange":
+                response = await exchange_handler(command_arg)
+            elif command_action == "list":
+                response = await exchange_cur_list_handler()
+            else:
+                response = "Your command unknown!"
+
+            await websoket_send(response, websocket)
 
 
 async def main():
