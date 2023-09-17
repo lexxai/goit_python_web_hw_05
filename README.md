@@ -12,7 +12,7 @@
 7. Docker. 
     - Збирання образу: scripts/docker_build_image.cmd 
     - Всі серевери заускаються у одному контейнері: scripts/docker_run.cmd 
-    - Доступ за http://localhost:8000, сокет сервер: ws://localhost:8000
+    - Доступ за http://localhost:8000, сокет сервер: ws://localhost:8080
     - Образ є тут: https://hub.docker.com/r/lexxai/web_hw_05
 
 
