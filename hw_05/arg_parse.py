@@ -1,8 +1,14 @@
 from argparse import ArgumentParser, ArgumentError
+import asyncio
+import platform
+try:
+    from hw_05.currency_list import CurrencyListCache
+except ImportError:
+    from currency_list import CurrencyListCache
 
-currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 
-                 'GEL', 'HUF', 'ILS', 'JPY', 'KZT', 'MDL', 'NOK', 'PLN', 'SEK', 'SGD', 
-                 'TMT', 'TRY', 'USD', 'UZS', 'XAU']
+# currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 
+#                  'GEL', 'HUF', 'ILS', 'JPY', 'KZT', 'MDL', 'NOK', 'PLN', 'SEK', 'SGD', 
+#                  'TMT', 'TRY', 'USD', 'UZS', 'XAU']
 
 def validate_args(args: dict) -> tuple[bool, str]:
     try:
@@ -14,7 +20,8 @@ def validate_args(args: dict) -> tuple[bool, str]:
 
 
 def get_currency_list():
-    return ",".join(currency_list)
+    # return ",".join(currency_list)
+    return currency_list
 
 
 def check_days(value: str) -> int:
@@ -57,3 +64,16 @@ def arguments_parser():
 
     args = vars(ap.parse_args())
     return args
+
+if platform.system() == "Windows":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+currency_list =  CurrencyListCache()
+asyncio.run(currency_list.read_cache())
+
+# if __name__ == "__main__":
+#     if platform.system() == "Windows":
+#         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+#     asyncio.run(currency_list.read_cache())
+# else:
+#     currency_list.read_cache()
