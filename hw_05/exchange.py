@@ -1,5 +1,5 @@
 import asyncio
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import platform
 import logging
 import json
@@ -9,9 +9,9 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 try:
-    from arg_parse import arguments_parser, validate_args
+    from arg_parse import arguments_parser, validate_args, get_currency_list
 except ImportError:
-    from hw_05.arg_parse import arguments_parser, validate_args
+    from hw_05.arg_parse import arguments_parser, validate_args, get_currency_list
 
 
 async def get_request(
@@ -62,8 +62,8 @@ def filter_result(data_json: dict, allowed_list: list[str] = None) -> dict:
                 # logger.info(currency)
                 if currency in allowed_list:
                     filtered_rate[currency] = {
-                        "sale": er.get("saleRate"),
-                        "purchase": er.get("purchaseRate"),
+                        "sale": er.get("saleRate", er.get("saleRateNB")),
+                        "purchase": er.get("purchaseRate", er.get("purchaseRateNB")),
                     }
                 # optimieze filter all found, stop
                 if len(filtered_rate) >= len(allowed_list):
@@ -86,6 +86,8 @@ def filter_results(list_data: list[dict], allowed_list: list[str] = None) -> dic
 
 
 def date_calc(days: int) -> date:
+    if datetime.now().hour < 12:
+        days += 1
     td = timedelta(days=days)
     date_c = date.today() - td
     return date_c.strftime("%d.%m.%Y")
