@@ -51,9 +51,13 @@ class CurrencyListCacheAsync:
     def get_currency_list(self) -> list[str]:
         return self.currency_list
 
-    async def get_currency_list_async(self) -> list[str]:
+    async def get_list_async(self) -> list[str]:
         await self.read_cache()
         return self.currency_list
+    
+    async def get_str_async(self) -> str:
+        await self.read_cache()
+        return str(self)
 
     async def check_cache_life(self):
         result = False
@@ -66,7 +70,7 @@ class CurrencyListCacheAsync:
 
     async def read_cache(self):
         state_cache = await self.check_cache_life()
-        if not state_cache:
+        if not state_cache and await self.cache_file.is_file():
             text = await self.cache_file.read_text(encoding="utf-8-sig")
             if text:
                 data = text.strip().split(",")
@@ -74,7 +78,7 @@ class CurrencyListCacheAsync:
                     self.currency_list = data
                     modidied = await self.cache_file.stat()
                     self.is_cached = modidied.st_mtime
-                    self.logger.info("read_cache done")
+                    self.logger.debug("read_cache done")
 
     async def update_cache(self, data: list[str], forse: bool = False):
         # self.logger.debug([data, self.currency_list] )
@@ -100,13 +104,13 @@ async def main_async(debug: bool = False):
     # logger = logging.getLogger(__name__)
     cl = CurrencyListCacheAsync(debug = debug)
     # await cl.read_cache()
-    cl.logger.info(await cl.get_currency_list_async())
+    cl.logger.info(await cl.get_list_async())
     await cl.update_cache(["EUR", "GBP"])
-    cl.logger.info(await cl.get_currency_list_async())
+    cl.logger.info(await cl.get_list_async())
     await cl.update_cache(["EUR", "GBP"])
-    cl.logger.info(await cl.get_currency_list_async())
+    cl.logger.info(await cl.get_list_async())
     await cl.update_cache(["EUR", "AAA"])
-    cl.logger.info(await cl.get_currency_list_async())
+    cl.logger.info(await cl.get_list_async())
     # await cl.update_cache(["EUR", "BBB"], forse=True)
     # self.logger.info(cl.currency_list)
 

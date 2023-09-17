@@ -55,7 +55,7 @@ async def exchange_handler(command_arg: str = None) -> str:
 
 
 async def exchange_cur_list_handler(command_arg: str = None) -> str:
-    return get_currency_list_cached_async()
+    return await get_currency_list_cached_async()
 
 
 def parse_command(command: str):
@@ -82,7 +82,7 @@ async def exchange_service(websocket: websockets):
     if command_action == "exchange":
         response = await exchange_handler(command_arg)
     elif command_action == "list":
-        response = exchange_cur_list_handler()
+        response = await exchange_cur_list_handler()
     else:
         response = "Your command unknown!"
 

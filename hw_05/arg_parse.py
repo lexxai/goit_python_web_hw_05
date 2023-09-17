@@ -22,11 +22,16 @@ def validate_args(args: dict) -> tuple[bool, str]:
 
 def get_currency_list_cached():
     # return ",".join(currency_list)
-    return asyncio.run(currency_list.get_currency_list_async())
+    return asyncio.run(currency_list.get_list_async())
+    # return currency_list
+
+def get_currencies_str_cached():
+    # return ",".join(currency_list)
+    return asyncio.run(currency_list.get_str_async())
     # return currency_list
 
 def get_currency_list_cached_async() -> Coroutine:
-    return currency_list.get_currency_list_async
+    return currency_list.get_str_async()
 
 
 def check_days(value: str) -> int:
@@ -40,14 +45,14 @@ def check_currency(value: str|list) -> list[str]:
         values = set(value.strip().split(","))
     else:
         values = value
-    if all(item in currency_list for item in values):
+    if all(item in currency_list.get_currency_list() for item in values):
         return list(values)
     raise ArgumentError(message="Wrong list of currency", argument=None)
 
 
 def arguments_parser():
     ap = ArgumentParser(
-        description=f"Get exchangeRate from Bank: {get_currency_list_cached()}"
+        description=f"Get exchangeRate from Bank: {get_currencies_str_cached()}"
     )
     ap.add_argument(
         "--days",
@@ -57,7 +62,7 @@ def arguments_parser():
     )
     ap.add_argument(
         "--currencies",
-        help=f'currencies for list. Allowed: items "{get_currency_list_cached()}". Please use coma separeted list. default: EUR,USD ',
+        help=f'currencies for list. Allowed: items "{get_currencies_str_cached()}". Please use coma separeted list. default: EUR,USD ',
         default="EUR,USD",
         type=check_currency,
     )
