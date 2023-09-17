@@ -9,15 +9,19 @@
 5. Консольний застосунок / Web Server HTTPServer - hw_05/server_http_sync.py
 6. HTML WebSocket Client на JavaScript - html/index.html
 7. WebSocket Server зберігає протоколи запитів до файлу  logs/server_socket.log
-7. Docker. 
+8. Консольний застосунок - exchange_cli. 
+    - Встановлленя pip install .
+    - Запсуск з консолі с описом команд: exchange_cli -h
+9. Docker. 
     - Збирання образу: scripts/docker_build_image.cmd 
     - Всі серевери заускаються у одному контейнері: scripts/docker_run.cmd 
     - Доступ за http://localhost:8000, сокет сервер: ws://localhost:8080
     - Образ є тут: https://hub.docker.com/r/lexxai/web_hw_05
 
 
-https://github.com/lexxai/goit_python_web_hw_05
-https://hub.docker.com/r/lexxai/web_hw_05
+GitHUB: https://github.com/lexxai/goit_python_web_hw_05
+
+DockerHub: https://hub.docker.com/r/lexxai/web_hw_05
 
 
 ```
