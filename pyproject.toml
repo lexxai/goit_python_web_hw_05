@@ -2,8 +2,15 @@
 name = "goit-python-web-hw-05"
 version = "0.1.0"
 description = ""
-authors = ["lexxai <lexxai@users.noreply.github.com>"]
+authors = ["lexxai <lexxai@gmail.com>"]
 readme = "README.md"
+repository = "https://github.com/lexxai/goit_python_web_hw_05"
+packages = [
+    { include = "hw_05" },
+]
+
+[tool.poetry.scripts]
+exchange_cli = 'hw_05.exchange:main'
 
 [tool.poetry.dependencies]
 python = "^3.11"
