@@ -67,15 +67,19 @@ def parse_command(command: str):
         return command, command_arg
     return None,[]
 
+LIST_COMMANDS = ["exchange", "list"]
 
 async def exchange_service(websocket: websockets):
     command: str = await websocket.recv()
     print(f"<<< {command}")
     await file_logger_request(command, "<<<", websocket)
     command_action, command_arg = parse_command(command)
-    if command_action == "exchange":
+    if command_action in LIST_COMMANDS:
         response = f"Your command {command} accepetd. Waiting result..."
-        await websoket_send(response, websocket)
+    else:
+         response = f"Your command {command} not accepetd."
+    await websoket_send(response, websocket)
+    if command_action == "exchange":
         response = await exchange_handler(command_arg)
     elif command_action == "list":
         response = exchange_cur_list_handler()
@@ -86,7 +90,7 @@ async def exchange_service(websocket: websockets):
 
 
 async def main():
-    async with websockets.serve(exchange_service, "localhost", 8080):
+    async with websockets.serve(exchange_service, "0.0.0.0", 8080):
         await asyncio.Future()  # run forever
 
 
