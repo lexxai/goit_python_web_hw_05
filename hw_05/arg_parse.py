@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, ArgumentError
 import asyncio
 import platform
+from  typing import Coroutine
 try:
     from hw_05.currency_list import CurrencyListCacheAsync
 except ImportError:
@@ -19,10 +20,13 @@ def validate_args(args: dict) -> tuple[bool, str]:
        return False, e.message
 
 
-def get_currency_list():
+def get_currency_list_cached():
     # return ",".join(currency_list)
     return asyncio.run(currency_list.get_currency_list_async())
     # return currency_list
+
+def get_currency_list_cached_async() -> Coroutine:
+    return currency_list.get_currency_list_async
 
 
 def check_days(value: str) -> int:
@@ -43,7 +47,7 @@ def check_currency(value: str|list) -> list[str]:
 
 def arguments_parser():
     ap = ArgumentParser(
-        description=f"Get exchangeRate from Bank: {get_currency_list()}"
+        description=f"Get exchangeRate from Bank: {get_currency_list_cached()}"
     )
     ap.add_argument(
         "--days",
@@ -53,7 +57,7 @@ def arguments_parser():
     )
     ap.add_argument(
         "--currencies",
-        help=f'currencies for list. Allowed: items "{get_currency_list()}". Please use coma separeted list. default: EUR,USD ',
+        help=f'currencies for list. Allowed: items "{get_currency_list_cached()}". Please use coma separeted list. default: EUR,USD ',
         default="EUR,USD",
         type=check_currency,
     )

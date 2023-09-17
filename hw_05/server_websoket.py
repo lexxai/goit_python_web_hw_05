@@ -8,9 +8,9 @@ from aiofile import async_open
 from aiopath import AsyncPath
 
 try:
-    from hw_05.exchange import exchange, get_currency_list
+    from hw_05.exchange import exchange, get_currency_list_cached_async
 except ImportError:
-    from exchange import exchange, get_currency_list
+    from exchange import exchange, get_currency_list_cached_async
 
 
 logs_dir = AsyncPath("logs")
@@ -54,8 +54,8 @@ async def exchange_handler(command_arg: str = None) -> str:
     return excange_result
 
 
-def exchange_cur_list_handler(command_arg: str = None) -> str:
-    return get_currency_list()
+async def exchange_cur_list_handler(command_arg: str = None) -> str:
+    return get_currency_list_cached_async()
 
 
 def parse_command(command: str):

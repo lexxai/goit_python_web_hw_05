@@ -56,32 +56,29 @@ class CurrencyListCacheAsync:
         return self.currency_list
 
     async def check_cache_life(self):
+        result = False
         now_time = datetime.now().timestamp()
-        if self.is_cached is None and await self.cache_file.is_file():
-            modidied = await self.cache_file.stat()
-            self.is_cached = modidied.st_mtime
-            self.logger.debug("read fresh st_mtime")
-        live_seconds = now_time - self.is_cached
-        result = live_seconds < self.cache_life
-        self.logger.debug(f"{live_seconds=}")
+        if self.is_cached is not None:
+            live_seconds = now_time - self.is_cached
+            result = live_seconds < self.cache_life
+        # self.logger.debug(f"check_cache_life {result=}")
         return result
 
     async def read_cache(self):
-        if await self.check_cache_life():
+        state_cache = await self.check_cache_life()
+        if not state_cache:
             text = await self.cache_file.read_text(encoding="utf-8-sig")
-            modidied = await self.cache_file.stat()
             if text:
                 data = text.strip().split(",")
                 if data:
                     self.currency_list = data
+                    modidied = await self.cache_file.stat()
                     self.is_cached = modidied.st_mtime
                     self.logger.info("read_cache done")
 
     async def update_cache(self, data: list[str], forse: bool = False):
         # self.logger.debug([data, self.currency_list] )
         if data != self.currency_list:
-            if await self.check_cache_life() and not forse:
-                return
             try:
                 await self.cache_file.write_text(
                     ",".join(data), encoding="utf-8", newline=""
@@ -102,12 +99,14 @@ async def main_async(debug: bool = False):
     # global logger
     # logger = logging.getLogger(__name__)
     cl = CurrencyListCacheAsync(debug = debug)
-    await cl.read_cache()
-    cl.logger.info(cl)
+    # await cl.read_cache()
+    cl.logger.info(await cl.get_currency_list_async())
     await cl.update_cache(["EUR", "GBP"])
-    cl.logger.info(cl)
+    cl.logger.info(await cl.get_currency_list_async())
+    await cl.update_cache(["EUR", "GBP"])
+    cl.logger.info(await cl.get_currency_list_async())
     await cl.update_cache(["EUR", "AAA"])
-    cl.logger.info(cl)
+    cl.logger.info(await cl.get_currency_list_async())
     # await cl.update_cache(["EUR", "BBB"], forse=True)
     # self.logger.info(cl.currency_list)
 
