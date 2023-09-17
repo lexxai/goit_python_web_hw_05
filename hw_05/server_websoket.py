@@ -21,7 +21,7 @@ def log_configure():
     logging.basicConfig(format=FORMAT, level=logging.ERROR)
 
 
-async def file_logger_request(msg: str, mgs_type: str = "", ws: websockets = None):
+async def file_logger_request(msg: str, mgs_type: str = "", ws: websockets = None, session_id: str=None):
     if ws:
         # Get the client's IP address
         remote_ip, remote_port = ws.remote_address
@@ -29,14 +29,14 @@ async def file_logger_request(msg: str, mgs_type: str = "", ws: websockets = Non
         now_is = datetime.now()
         await logs_dir.mkdir(exist_ok=True, parents=True)
         async with logs_file.open("a") as afp:
-            row = f"{now_is}: [{remote_ip}:{remote_port}] {mgs_type} {msg}\n"
+            row = f"{now_is}: [{remote_ip}:{remote_port} {session_id}] {mgs_type} {msg}\n"
             await afp.write(row)
 
 
-async def websoket_send(mgs, ws):
+async def websoket_send(mgs, ws, session_id: str=None):
     await ws.send(mgs)
-    await file_logger_request(mgs, ">>>", ws=ws)
-    print(f">>> {mgs}")
+    await file_logger_request(mgs, ">>>", ws=ws, session_id=session_id)
+    print(f">>> [{session_id}] {mgs}")
 
 
 async def exchange_handler(command_arg: str = None) -> str:
@@ -79,9 +79,9 @@ sessions = {}
 
 async def exchange_service(websocket: websockets):
     command: str = await websocket.recv()
-    await file_logger_request(command, "<<<", websocket)
     session_id, command_action, command_arg = parse_command(command)
     command = " ".join(command.split()[1:])
+    await file_logger_request(command, "<<<", websocket, session_id=session_id)
 
     if not session_id:
         response = f"Sorry. Your sesion ID is unknown."
@@ -95,22 +95,22 @@ async def exchange_service(websocket: websockets):
             
     if lock.locked():
         response = f"Sorry. The system is busy with your task."
-        await websoket_send(response, websocket)
+        await websoket_send(response, websocket, session_id=session_id)
         return
     
     if sem.locked():
         response = f"We're sorry. The system is busy, the response will be delayed, please be patient."
-        await websoket_send(response, websocket)
+        await websoket_send(response, websocket, session_id=session_id)
 
     async with sem:
         async with lock:
-            print(f"<<< {command}")
+            print(f"<<< [{session_id}] {command}")
 
             if command_action in LIST_COMMANDS:
                 response = f"Your command '{command}' accepetd. Waiting result..."
             else:
                 response = f"Your command '{command}' not accepetd."
-            await websoket_send(response, websocket)
+            await websoket_send(response, websocket, session_id=session_id)
             if command_action == "exchange":
                 response = await exchange_handler(command_arg)
             elif command_action == "list":
@@ -118,7 +118,7 @@ async def exchange_service(websocket: websockets):
             else:
                 response = "Your command unknown!"
 
-            await websoket_send(response, websocket)
+            await websoket_send(response, websocket, session_id=session_id)
 
 
 async def main():

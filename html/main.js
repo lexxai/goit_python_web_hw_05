@@ -98,4 +98,11 @@ formChat.addEventListener('submit', (e) => {
   textField.value = null
 })
 
-session_id = Date.now()
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); 
+}
+
+session_id = Date.now() + "-" + getRandomInt(10000, 99999)
+console.log("session_id",session_id)
