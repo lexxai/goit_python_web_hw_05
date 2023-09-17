@@ -20,17 +20,14 @@ RUN pip install --no-cache -r requirements.txt
 
 RUN chmod +x run_servers.sh
 
-
-CMD $APP_HOME/run_servers.sh
-
-# RUN python hw_05\server_http_async.py
-
 EXPOSE 8000/tcp
 EXPOSE 8080/tcp
 
 
 VOLUME $APP_HOME/logs
 
+# Запустимо наші servers всередині контейнера
+CMD $APP_HOME/run_servers.sh
 
 # Запустимо наш застосунок всередині контейнера
 # ENTRYPOINT [ "python", "hw_05/server_http_async.py" ]

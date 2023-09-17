@@ -1,8 +1,27 @@
 # goit_python_web_hw_05
 
+Домашнє завадння 05.
+
+1. Консольний застосунок / Модуль запиту курсу валют - hw_05/exchange.py
+2. Консольний застосунок / WebSocket Server - hw_05/server_websoket.py
+3. Консольний застосунок / WebSocket Client - hw_05/client_websoket.py
+4. Консольний застосунок / Web Server aiohttp - hw_05/server_http_async.py
+5. Консольний застосунок / Web Server HTTPServer - hw_05/server_http_sync.py
+6. HTML WebSocket Client на JavaScript - html/index.html
+7. WebSocket Server зберігає протоколи запитів до файлу  logs/server_socket.log
+7. Docker. 
+    - Збирання образу: scripts/docker_build_image.cmd 
+    - Всі серевери заускаються у одному контейнері: scripts/docker_run.cmd 
+    - Доступ за http://localhost:8000, сокет сервер: ws://localhost:8000
+    - Образ є тут: https://hub.docker.com/r/lexxai/web_hw_05
+
+
+https://github.com/lexxai/goit_python_web_hw_05
+https://hub.docker.com/r/lexxai/web_hw_05
+
 
 ```
-usage: main.py [-h] [--days DAYS] [--currencies CURRENCIES] [--verbose]
+usage: exchange.py.py [-h] [--days DAYS] [--currencies CURRENCIES] [--verbose]
 
 Get exchangeRate from Bank: AUD,AZN,BYN,CAD,CHF,CNY,CZK,DKK,EUR,GBP,GEL,HUF,ILS,JPY,KZT,MDL,NOK,PLN,SEK,SGD,TMT,TRY,USD,UZS,XAU   
 
