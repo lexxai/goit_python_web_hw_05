@@ -33,7 +33,7 @@ const connect = (message) => {
 
   socket.addEventListener('open', function (event) {
     if (message) {
-      socket.send(message)
+      socket.send(session_id + " " + message)
     } else {
       socket.send('Connection Established');
     }
@@ -99,3 +99,5 @@ formChat.addEventListener('submit', (e) => {
   connect(textField.value)
   textField.value = null
 })
+
+session_id = Date.now()

@@ -4,7 +4,6 @@ import websockets
 import logging
 from datetime import datetime
 
-from aiofile import async_open
 from aiopath import AsyncPath
 
 try:
@@ -62,31 +61,57 @@ def parse_command(command: str):
     command_line = command.strip()
     if command_line:
         parts = command_line.split()
-        command = parts[0].strip().lower()
-        command_arg: list[str] = parts[1:]
-        return command, command_arg
+        session_id = parts[0].strip()
+        command = parts[1].strip().lower()
+        command_arg: list[str] = parts[2:]
+        return session_id, command, command_arg
     return None,[]
 
 LIST_COMMANDS = ["exchange", "list"]
 
+exchange_handler_busy = {}
+
+
+# lock = asyncio.Lock()
+
+sessions = {}
+
 async def exchange_service(websocket: websockets):
     command: str = await websocket.recv()
-    print(f"<<< {command}")
     await file_logger_request(command, "<<<", websocket)
-    command_action, command_arg = parse_command(command)
-    if command_action in LIST_COMMANDS:
-        response = f"Your command {command} accepetd. Waiting result..."
-    else:
-         response = f"Your command {command} not accepetd."
-    await websoket_send(response, websocket)
-    if command_action == "exchange":
-        response = await exchange_handler(command_arg)
-    elif command_action == "list":
-        response = await exchange_cur_list_handler()
-    else:
-        response = "Your command unknown!"
+    session_id, command_action, command_arg = parse_command(command)
+    command = " ".join(command.split()[1:])
 
-    await websoket_send(response, websocket)
+    if not session_id:
+        response = f"Sorry. Your sesion ID is unknown."
+        await websoket_send(response, websocket)
+        return
+    
+    lock = sessions.get(session_id)
+    if not lock:
+        lock = asyncio.Lock()
+        sessions[session_id] = lock
+            
+    if lock.locked():
+        response = f"Sorry. The system is busy with your task."
+        await websoket_send(response, websocket)
+        return
+    async with lock:
+        print(f"<<< {command}")
+
+        if command_action in LIST_COMMANDS:
+            response = f"Your command '{command}' accepetd. Waiting result..."
+        else:
+            response = f"Your command '{command}' not accepetd."
+        await websoket_send(response, websocket)
+        if command_action == "exchange":
+            response = await exchange_handler(command_arg)
+        elif command_action == "list":
+            response = await exchange_cur_list_handler()
+        else:
+            response = "Your command unknown!"
+
+        await websoket_send(response, websocket)
 
 
 async def main():
