@@ -2,9 +2,9 @@ from argparse import ArgumentParser, ArgumentError
 import asyncio
 import platform
 try:
-    from hw_05.currency_list import CurrencyListCache
+    from hw_05.currency_list import CurrencyListCacheAsync
 except ImportError:
-    from currency_list import CurrencyListCache
+    from currency_list import CurrencyListCacheAsync
 
 # currency_list = ['AUD', 'AZN', 'BYN', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 
 #                  'GEL', 'HUF', 'ILS', 'JPY', 'KZT', 'MDL', 'NOK', 'PLN', 'SEK', 'SGD', 
@@ -21,7 +21,8 @@ def validate_args(args: dict) -> tuple[bool, str]:
 
 def get_currency_list():
     # return ",".join(currency_list)
-    return currency_list
+    return asyncio.run(currency_list.get_currency_list_async())
+    # return currency_list
 
 
 def check_days(value: str) -> int:
@@ -68,8 +69,9 @@ def arguments_parser():
 if platform.system() == "Windows":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-currency_list =  CurrencyListCache()
-asyncio.run(currency_list.read_cache())
+currency_list =  CurrencyListCacheAsync()
+
+# asyncio.run(currency_list.read_cache())
 
 # if __name__ == "__main__":
 #     if platform.system() == "Windows":

@@ -5,7 +5,7 @@ from aiopath import AsyncPath
 import logging
 
 
-class CurrencyListCache:
+class CurrencyListCacheAsync:
     cache_file = AsyncPath("logs").joinpath("currency.dat")
     cache_life = 2 * 60 * 60 * 24  # 2 days
     # cache_life = 20
@@ -39,7 +39,7 @@ class CurrencyListCache:
             "UZS",
             "XAU",
         ]
-        self.is_cached: bool = False
+        self.is_cached: float = None
         self.log_configure(debug)
 
     def __repr__(self) -> str:
@@ -51,24 +51,31 @@ class CurrencyListCache:
     def get_currency_list(self) -> list[str]:
         return self.currency_list
 
+    async def get_currency_list_async(self) -> list[str]:
+        await self.read_cache()
+        return self.currency_list
+
     async def check_cache_life(self):
-        if await self.cache_file.is_file():
+        now_time = datetime.now().timestamp()
+        if self.is_cached is None and await self.cache_file.is_file():
             modidied = await self.cache_file.stat()
-            now_time = datetime.now().timestamp()
-            live_seconds = now_time - modidied.st_mtime
-            self.logger.debug(f"{live_seconds=}")
-            return live_seconds < self.cache_life
-        return self.is_cached
+            self.is_cached = modidied.st_mtime
+            self.logger.debug("read fresh st_mtime")
+        live_seconds = now_time - self.is_cached
+        result = live_seconds < self.cache_life
+        self.logger.debug(f"{live_seconds=}")
+        return result
 
     async def read_cache(self):
         if await self.check_cache_life():
             text = await self.cache_file.read_text(encoding="utf-8-sig")
+            modidied = await self.cache_file.stat()
             if text:
                 data = text.strip().split(",")
                 if data:
                     self.currency_list = data
-                    self.is_cached = True
-                    self.logger.debug("read_cache done")
+                    self.is_cached = modidied.st_mtime
+                    self.logger.info("read_cache done")
 
     async def update_cache(self, data: list[str], forse: bool = False):
         # self.logger.debug([data, self.currency_list] )
@@ -81,7 +88,8 @@ class CurrencyListCache:
                 )
                 self.currency_list = data.copy()
                 self.logger.debug("update_cache done")
-                self.is_cached = True
+                modidied = await self.cache_file.stat()
+                self.is_cached = modidied.st_mtime
             except OSError as e:
                 self.logger.error(e)
 
@@ -93,7 +101,7 @@ class CurrencyListCache:
 async def main_async(debug: bool = False):
     # global logger
     # logger = logging.getLogger(__name__)
-    cl = CurrencyListCache(debug = debug)
+    cl = CurrencyListCacheAsync(debug = debug)
     await cl.read_cache()
     cl.logger.info(cl)
     await cl.update_cache(["EUR", "GBP"])
