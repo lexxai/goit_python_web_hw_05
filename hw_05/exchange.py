@@ -9,9 +9,9 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 try:
-    from arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async, update_currency_list
+    from arg_parse_async import arguments_parser, validate_args, update_currency_list, get_currency_list_cached, get_currency_list_cached_async, 
 except ImportError:
-    from hw_05.arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async, update_currency_list
+    from hw_05.arg_parse_async import arguments_parser, validate_args, update_currency_list, get_currency_list_cached, get_currency_list_cached_async, 
 
 
 async def get_request(
