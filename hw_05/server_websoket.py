@@ -16,9 +16,9 @@ logs_dir = AsyncPath("logs")
 logs_file = logs_dir.joinpath("server_socket.log")
 
 
-def log_configure():
+def log_configure(debug=False):
     FORMAT = "%(asctime)s  %(message)s"
-    logging.basicConfig(format=FORMAT, level=logging.ERROR)
+    logging.basicConfig(format=FORMAT, level=logging.DEBUG if debug else logging.INFO)
 
 
 async def file_logger_request(msg: str, mgs_type: str = "", ws: websockets = None, session_id: str=None):
@@ -78,6 +78,7 @@ sem = asyncio.Semaphore(2)
 sessions = {}
 
 async def exchange_service(websocket: websockets):
+    logger.debug(f"exchange_service id: {websocket.id}")
     command: str = await websocket.recv()
     session_id, command_action, command_arg = parse_command(command)
     command = " ".join(command.split()[1:])
@@ -130,5 +131,5 @@ if __name__ == "__main__":
     if platform.system() == "Windows":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     logger = logging.getLogger(__name__)
-    log_configure()
+    log_configure(debug=False)
     asyncio.run(main())
