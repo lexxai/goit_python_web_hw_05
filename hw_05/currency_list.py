@@ -83,10 +83,6 @@ class CurrencyListCacheAsync:
 
     async def update_cache(self, data: list[str], forse: bool = False):
         # self.logger.debug([data, self.currency_list] )
-        try:
-            data.remove("UAH")
-        except ValueError:
-            ...
         if data != self.currency_list:
             try:
                 await self.cache_file.write_text(

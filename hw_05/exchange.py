@@ -9,9 +9,9 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 try:
-    from arg_parse_async import arguments_parser, validate_args, update_currency_list, get_currency_list_cached, get_currency_list_cached_async, 
+    from arg_parse_async import arguments_parser, validate_args, update_currency_list, get_currency_list_cached_async
 except ImportError:
-    from hw_05.arg_parse_async import arguments_parser, validate_args, update_currency_list, get_currency_list_cached, get_currency_list_cached_async, 
+    from hw_05.arg_parse_async import arguments_parser, validate_args, update_currency_list, get_currency_list_cached_async 
 
 
 async def get_request(
@@ -54,7 +54,8 @@ def search_all_currency(data_json: dict) -> list[str]:
             exch_rate = data_json.get("exchangeRate")
             for er in exch_rate:
                 currency = er.get("currency")
-                result.append(currency)
+                if currency != "UAH":
+                    result.append(currency)
     return result
 
 
