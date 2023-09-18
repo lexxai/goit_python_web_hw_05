@@ -18,6 +18,11 @@ def validate_args(args: dict) -> tuple[bool, str]:
         return True, "" 
     except ArgumentError as e:
        return False, e.message
+    
+async def update_currency_list(cur_list: list[str]):
+    if cur_list:
+        await currency_list.update_cache(cur_list)
+
 
 
 def get_currency_list_cached():

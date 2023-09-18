@@ -9,9 +9,9 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 try:
-    from arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async
+    from arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async, update_currency_list
 except ImportError:
-    from hw_05.arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async
+    from hw_05.arg_parse_async import arguments_parser, validate_args, get_currency_list_cached, get_currency_list_cached_async, update_currency_list
 
 
 async def get_request(
@@ -46,6 +46,19 @@ async def get_request(
             await asyncio.sleep(15)
 
 
+def search_all_currency(data_json: dict) -> list[str]:
+    result = []
+    if data_json:
+        date = data_json.get("date")        
+        if date:
+            exch_rate = data_json.get("exchangeRate")
+            for er in exch_rate:
+                currency = er.get("currency")
+                result.append(currency)
+    return result
+
+
+
 def filter_result(data_json: dict, allowed_list: list[str] = None) -> dict:
     if allowed_list is None:
         allowed_list = ["EUR", "USD"]
@@ -73,15 +86,20 @@ def filter_result(data_json: dict, allowed_list: list[str] = None) -> dict:
         return result
 
 
-def filter_results(list_data: list[dict], allowed_list: list[str] = None) -> dict:
-    result = filter(
-        lambda res: res, map(lambda data: filter_result(data, allowed_list), list_data)
-    )
-    # result = []
-    # for data in list_data:
-    #     filterd_result = filter_result(data, allowed_list)
-    #     if filterd_result:
-    #         result.append(filterd_result)
+async def filter_results(list_data: list[dict], allowed_list: list[str] = None) -> dict:
+    # result = filter(
+    #     lambda res: res, map(lambda data: filter_result(data, allowed_list), list_data)
+    # )
+    result = []
+    for id, data in enumerate(list_data):
+        if id == 0:
+            currency_list = search_all_currency(data)
+            # logger.info(f"{currensy_list=}")
+            await update_currency_list(currency_list)
+            
+        filterd_result = filter_result(data, allowed_list)
+        if filterd_result:
+            result.append(filterd_result)
     return list(result)
 
 
@@ -132,7 +150,7 @@ async def exchange(args: dict = None) -> str:
         logger.setLevel(logging.ERROR)
     logger.info(f"Get request for {days} days")
     results = await get_currencies(days)
-    results = filter_results(results, currencies)
+    results = await filter_results(results, currencies)
     if len(results) != days:
         logger.error(
             f"Some days was skipped, retuned only {len(results)} records from {days}"
