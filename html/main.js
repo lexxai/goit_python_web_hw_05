@@ -33,10 +33,8 @@ const connect = (message) => {
 
   socket.addEventListener('open', function (event) {
     if (message) {
-      socket.send(message)
-    } else {
-      socket.send('Connection Established');
-    }
+      socket.send(session_id + " " + message)
+    } 
   });
 
   socket.addEventListener('message', function (event) {
@@ -47,7 +45,7 @@ const connect = (message) => {
 
   socket.addEventListener('close', (e) => {
     console.log('Socket is closed.', e.reason);
-    print_txt(' Socket is closed.')
+    // print_txt(' Socket is closed.')
   })
 }
 
@@ -99,3 +97,12 @@ formChat.addEventListener('submit', (e) => {
   connect(textField.value)
   textField.value = null
 })
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); 
+}
+
+session_id = Date.now() + "-" + getRandomInt(10000, 99999)
+console.log("session_id",session_id)

@@ -17,6 +17,8 @@
     - Всі серевери заускаються у одному контейнері: scripts/docker_run.cmd 
     - Доступ за http://localhost:8000, сокет сервер: ws://localhost:8080
     - Образ є тут: https://hub.docker.com/r/lexxai/web_hw_05
+10. WebSocket Session ID. Ліміти на кількість підключень від одного клієнта, та в ціломму на систему.
+11. Система кешування списуку доступних валют. І його оновленння. Файл. logs\currency.dat
 
 
 GitHUB: https://github.com/lexxai/goit_python_web_hw_05
@@ -449,5 +451,10 @@ exchange 1 USD,PLN
 
 ## RESULT LOCAL WEB SERVER 
 
-![websocket log 01](doc/result_web_02.png)
+![websocket web 02](doc/result_web_02.png)
+
+
+## RESULT WEBSOKET SERVER LIMITS - ONE PER SESSION, TWO PER SYSTEM
+
+![websocket web 03](doc/result_web_03.png)
 
